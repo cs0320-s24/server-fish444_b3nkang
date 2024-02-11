@@ -278,7 +278,7 @@ public class Testing {
   }
 
   //    test commands:
-  //      ./run "dol_ri_earnings_disparity.csv" "14%" "true" "Employed Percent"
+  //      ./run-2 "dol_ri_earnings_disparity.csv" "14%" "true" "Employed Percent"
   //      ./run "dol_ri_earnings_disparity.csv" "14%" "false" "Employed Percent"
   //      ./run "dol_ri_earnings_disparity.csv" "14s%" "true" "2"
   //      ./run "dol_ri_earnings_disparity.csv" "14%" "false" "69"
