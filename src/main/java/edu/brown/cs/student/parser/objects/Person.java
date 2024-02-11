@@ -7,7 +7,6 @@ public class Person {
   private int age;
   private String state;
 
-
   public Person(String name, int age, String state) {
     this.name = name;
     this.age = age;
