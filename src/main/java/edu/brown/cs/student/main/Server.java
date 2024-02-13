@@ -15,8 +15,7 @@ public class Server {
 
   public static String filepath;
   public static List<List<String>> parsedStringCSV;
-
-  //  String filepath;
+  public static boolean loaded = false;
 
   public Server() {
     int port = 3232;

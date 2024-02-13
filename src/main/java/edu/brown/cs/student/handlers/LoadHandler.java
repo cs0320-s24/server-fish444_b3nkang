@@ -31,12 +31,15 @@ public class LoadHandler implements Route {
       FileReader csvToRead = new FileReader(filepathParam);
       responseMap.put("result", "success");
       responseMap.put("filepath", filepathParam);
+      Server.loaded = true;
     } catch (FileNotFoundException e) {
       responseMap.put("result", "error_datasource");
       responseMap.put("filepath", filepathParam);
+      Server.loaded = false;
     } catch (Exception e) {
       responseMap.put("result", "error_bad_json");
       responseMap.put("filepath", filepathParam);
+      Server.loaded = false;
     }
     return adapter.toJson(responseMap);
   }

@@ -22,7 +22,25 @@ public class SearchHandler implements Route {
     String columnidentifierParam = request.queryParams("columnidentifier");
     String error_type = null;
     String error_message = null;
-    System.out.println("PARSED COLUMN: " + columnidentifierParam);
+
+    System.out.println(searchvalueParam);
+    System.out.println(headerString);
+    System.out.println(columnidentifierParam);
+
+    //    System.out.println("PARSED COLUMN: " + columnidentifierParam);
+
+    Map<String, Object> responseMap = new HashMap<>();
+    Moshi moshi = new Moshi.Builder().build();
+    JsonAdapter<Map<String, Object>> adapter =
+        moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
+    System.out.println("1");
+
+    if (!Server.loaded) {
+      responseMap.put("result", "error_datasource");
+      responseMap.put("data", "none returned; csv must be loaded before viewing");
+      return adapter.toJson(responseMap);
+    }
+    System.out.println("2");
 
     // copied from Ben's CSV
     if (headerString.equals("true")) {
@@ -37,6 +55,7 @@ public class SearchHandler implements Route {
       //          "Error, incorrect \"header\" argument passed: argument must either be \"true\" or
       // \"false\".");
     }
+    System.out.println("3");
 
     // check if "columnIdentifier" provided
     if (columnidentifierParam != null) {
@@ -72,9 +91,11 @@ public class SearchHandler implements Route {
       columnIdentifierType = "NoArgSupplied";
     }
     // end of arg verification
+    System.out.println("4");
 
     // logic to call search
     if (columnIdentifierType.equals("int")) {
+      System.out.println("INT SEARCH");
       Search searchIndex =
           new Search(
               Server.parsedStringCSV,
@@ -106,6 +127,7 @@ public class SearchHandler implements Route {
       }
       //        System.out.println(rowsWithVal);
     } else if (columnIdentifierType.equals("String")) {
+      System.out.println("STRING SEARCH");
       Search searchHeader =
           new Search(
               Server.parsedStringCSV,
@@ -137,6 +159,18 @@ public class SearchHandler implements Route {
       }
       //        System.out.println(rowsWithVal);
     } else if (columnIdentifierType.equals("NoArgSupplied")) {
+      System.out.println("ARGLESS SEARCH");
+      System.out.println(
+          "PARAMS: "
+              + Server.parsedStringCSV
+              + " "
+              + searchvalueParam
+              + " "
+              + columnHeaderIdentifier
+              + " "
+              + columnIdentifierType
+              + " "
+              + header);
       Search searchNoArg =
           new Search(
               Server.parsedStringCSV,
@@ -149,20 +183,13 @@ public class SearchHandler implements Route {
         System.out.println(
             "Searching for `" + searchvalueParam + "` in the whole of `" + Server.filepath + "`,");
         System.out.println("your search term was found in the following row(s): " + rowsWithVal);
-      } else {
-        System.out.println(
-            "Searching for `" + searchvalueParam + "` in the whole of `" + Server.filepath + "`,");
-        System.out.println("your search term was found in the following row(s): none");
       }
       //        System.out.println(rowsWithVal);
     } else {
       System.out.println("SOMETHING HAS GONE VERY WRONG.");
     }
     //
-    Map<String, Object> responseMap = new HashMap<>();
-    Moshi moshi = new Moshi.Builder().build();
-    JsonAdapter<Map<String, Object>> adapter =
-        moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
+    System.out.println("5");
 
     ArrayList<String> params = new ArrayList<>();
     params.add(searchvalueParam);

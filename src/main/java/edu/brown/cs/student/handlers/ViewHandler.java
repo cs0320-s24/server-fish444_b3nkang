@@ -21,22 +21,30 @@ public class ViewHandler implements Route {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Map<String, Object>> adapter =
         moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
-    try {
-      FileReader csvToRead = new FileReader(Server.filepath);
-      Parser<List<String>> stringParser = new Parser<>(csvToRead, new CreateListOfStringsFromRow());
-      List<List<String>> parsedStringCSV = stringParser.readReader();
-      responseMap.put("result", "success");
-      responseMap.put("data", parsedStringCSV);
-      Server.parsedStringCSV = parsedStringCSV;
-    } catch (FileNotFoundException e) {
+
+    if (!Server.loaded) {
       responseMap.put("result", "error_datasource");
-      responseMap.put("data", "none returned; datasource error");
-      Server.parsedStringCSV = null;
-    } catch (Exception e) {
-      responseMap.put("result", "error_bad_json");
-      responseMap.put("data", "none returned; bad json");
-      Server.parsedStringCSV = null;
+      responseMap.put("data", "none returned; csv must be loaded before viewing");
+      return adapter.toJson(responseMap);
+    } else {
+      try {
+        FileReader csvToRead = new FileReader(Server.filepath);
+        Parser<List<String>> stringParser =
+            new Parser<>(csvToRead, new CreateListOfStringsFromRow());
+        List<List<String>> parsedStringCSV = stringParser.readReader();
+        responseMap.put("result", "success");
+        responseMap.put("data", parsedStringCSV);
+        Server.parsedStringCSV = parsedStringCSV;
+      } catch (FileNotFoundException e) {
+        responseMap.put("result", "error_datasource");
+        responseMap.put("data", "none returned; datasource error");
+        Server.parsedStringCSV = null;
+      } catch (Exception e) {
+        responseMap.put("result", "error_bad_json");
+        responseMap.put("data", "none returned; bad json");
+        Server.parsedStringCSV = null;
+      }
+      return adapter.toJson(responseMap);
     }
-    return adapter.toJson(responseMap);
   }
 }
