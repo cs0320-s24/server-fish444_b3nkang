@@ -34,15 +34,12 @@ public class ViewHandler implements Route {
         List<List<String>> parsedStringCSV = stringParser.readReader();
         responseMap.put("result", "success");
         responseMap.put("data", parsedStringCSV);
-        Server.parsedStringCSV = parsedStringCSV;
       } catch (FileNotFoundException e) {
         responseMap.put("result", "error_datasource");
         responseMap.put("data", "none returned; datasource error");
-        Server.parsedStringCSV = null;
       } catch (Exception e) {
         responseMap.put("result", "error_bad_json");
         responseMap.put("data", "none returned; bad json");
-        Server.parsedStringCSV = null;
       }
       return adapter.toJson(responseMap);
     }

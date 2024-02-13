@@ -2,7 +2,11 @@ package edu.brown.cs.student.handlers;
 
 import com.squareup.moshi.*;
 import edu.brown.cs.student.main.Server;
+import edu.brown.cs.student.parser.creators.CreateListOfStringsFromRow;
+import edu.brown.cs.student.parser.outputs.Parser;
 import edu.brown.cs.student.search.Search;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.*;
 import spark.*;
 
@@ -23,9 +27,9 @@ public class SearchHandler implements Route {
     String error_type = null;
     String error_message = null;
 
-    System.out.println(searchvalueParam);
-    System.out.println(headerString);
-    System.out.println(columnidentifierParam);
+//    System.out.println(searchvalueParam);
+//    System.out.println(headerString);
+//    System.out.println(columnidentifierParam);
 
     //    System.out.println("PARSED COLUMN: " + columnidentifierParam);
 
@@ -33,14 +37,36 @@ public class SearchHandler implements Route {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Map<String, Object>> adapter =
         moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
-    System.out.println("1");
+//    System.out.println("1");
 
     if (!Server.loaded) {
       responseMap.put("result", "error_datasource");
       responseMap.put("data", "none returned; csv must be loaded before viewing");
       return adapter.toJson(responseMap);
     }
-    System.out.println("2");
+
+    try {
+      // just to test that everything works
+      FileReader csvToRead = new FileReader(Server.filepath);
+      Parser<List<String>> stringParser = new Parser<>(csvToRead, new CreateListOfStringsFromRow());
+      List<List<String>> parsedStringCSVTest = stringParser.readReader();
+    } catch (FileNotFoundException e) {
+      System.out.println("UNREACHABLE TRIGGERED: SearchHandler PARSING");
+      responseMap.put("result", "error_datasource");
+      responseMap.put("data", "none returned; csv filepath invalid/could not be found");
+      return adapter.toJson(responseMap);
+    } catch (Exception e) {
+      System.out.println("UNREACHABLE TRIGGERED: SearchHandler PARSING");
+      responseMap.put("result", "error_bad_json");
+      responseMap.put("data", "none returned; bad json");
+      return adapter.toJson(responseMap);
+    }
+
+    FileReader csvToRead = new FileReader(Server.filepath);
+    Parser<List<String>> stringParser = new Parser<>(csvToRead, new CreateListOfStringsFromRow());
+    List<List<String>> parsedStringCSV = stringParser.readReader();
+
+//    System.out.println("2");
 
     // copied from Ben's CSV
     if (headerString.equals("true")) {
@@ -50,12 +76,12 @@ public class SearchHandler implements Route {
     } else {
       error_type = "error_bad_request";
       error_message =
-          "Error, incorrect \"header\" argument passed: argument must either be \"true\" or \"false\".";
+          "Error, incorrect 'header' argument passed: argument must either be 'true' or 'false'.";
       //      throw new IllegalArgumentException(
-      //          "Error, incorrect \"header\" argument passed: argument must either be \"true\" or
-      // \"false\".");
+      //          "Error, incorrect 'header' argument passed: argument must either be 'true' or
+      // 'false'.");
     }
-    System.out.println("3");
+//    System.out.println("3");
 
     // check if "columnIdentifier" provided
     if (columnidentifierParam != null) {
@@ -64,10 +90,10 @@ public class SearchHandler implements Route {
         if (!header) {
           error_type = "error_bad_request";
           error_message =
-              "Error, columnIdentifier-header argument conflict: header was set to \"false\" but a header-index-based \"columnIdentifier\" was specified.";
+              "Error, columnIdentifier-header argument conflict: header was set to 'false' but a header-index-based 'columnIdentifier' was specified.";
           //          throw new IllegalArgumentException(
           //              "Error, columnIdentifier-header argument conflict: header was set to
-          // \"false\" but a header-index-based \"columnIdentifier\" was specified.");
+          // 'false' but a header-index-based 'columnIdentifier' was specified.");
         } else {
           columnIndexIdentifier = Integer.parseInt(columnidentifierParam);
           columnIdentifierType = "int";
@@ -77,10 +103,10 @@ public class SearchHandler implements Route {
         if (!header) {
           error_type = "error_bad_request";
           error_message =
-              "Error, columnIdentifier-header argument conflict: header was set to \"false\" but a header-name-based \"columnIdentifier\" was specified.";
+              "Error, columnIdentifier-header argument conflict: header was set to 'false' but a header-name-based 'columnIdentifier' was specified.";
           //          throw new IllegalArgumentException(
           //              "Error, columnIdentifier-header argument conflict: header was set to
-          // \"false\" but a header-name-based \"columnIdentifier\" was specified.");
+          // 'false' but a header-name-based 'columnIdentifier' was specified.");
         } else {
           columnHeaderIdentifier = columnidentifierParam;
           columnIdentifierType = "String";
@@ -91,14 +117,14 @@ public class SearchHandler implements Route {
       columnIdentifierType = "NoArgSupplied";
     }
     // end of arg verification
-    System.out.println("4");
+//    System.out.println("4");
 
     // logic to call search
     if (columnIdentifierType.equals("int")) {
       System.out.println("INT SEARCH");
       Search searchIndex =
           new Search(
-              Server.parsedStringCSV,
+              parsedStringCSV,
               searchvalueParam,
               columnIndexIdentifier,
               columnIdentifierType,
@@ -130,7 +156,7 @@ public class SearchHandler implements Route {
       System.out.println("STRING SEARCH");
       Search searchHeader =
           new Search(
-              Server.parsedStringCSV,
+              parsedStringCSV,
               searchvalueParam,
               columnHeaderIdentifier,
               columnIdentifierType,
@@ -162,7 +188,7 @@ public class SearchHandler implements Route {
       System.out.println("ARGLESS SEARCH");
       System.out.println(
           "PARAMS: "
-              + Server.parsedStringCSV
+              + parsedStringCSV
               + " "
               + searchvalueParam
               + " "
@@ -173,7 +199,7 @@ public class SearchHandler implements Route {
               + header);
       Search searchNoArg =
           new Search(
-              Server.parsedStringCSV,
+              parsedStringCSV,
               searchvalueParam,
               columnHeaderIdentifier,
               columnIdentifierType,
@@ -189,7 +215,7 @@ public class SearchHandler implements Route {
       System.out.println("SOMETHING HAS GONE VERY WRONG.");
     }
     //
-    System.out.println("5");
+//    System.out.println("5");
 
     ArrayList<String> params = new ArrayList<>();
     params.add(searchvalueParam);
@@ -204,7 +230,7 @@ public class SearchHandler implements Route {
       responseMap.put("rows_with_params", "none returned; bad request params");
     } else {
       responseMap.put("result", "success");
-      responseMap.put("data", Server.parsedStringCSV);
+      responseMap.put("data", parsedStringCSV);
       responseMap.put("parameters", params);
       responseMap.put("rows_with_params", rowsWithVal);
     }

@@ -8,13 +8,11 @@ package edu.brown.cs.student.main;
 import static spark.Spark.after;
 
 import edu.brown.cs.student.handlers.*;
-import java.util.List;
 import spark.Spark;
 
 public class Server {
 
   public static String filepath;
-  public static List<List<String>> parsedStringCSV;
   public static boolean loaded = false;
 
   public Server() {
