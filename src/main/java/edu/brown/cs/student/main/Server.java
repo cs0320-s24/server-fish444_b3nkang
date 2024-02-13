@@ -1,7 +1,9 @@
 package edu.brown.cs.student.main;
 
-import static spark.Spark.after;
+// http://localhost:3232/loadcsv?filepath=data/prod/stardata.csv
+// http://localhost:3232/viewcsv
 
+import static spark.Spark.after;
 import edu.brown.cs.student.handlers.*;
 import spark.Spark;
 
@@ -37,6 +39,7 @@ public class Server {
           response.header("Access-Control-Allow-Methods", "*");
         });
     Spark.get("loadcsv", new LoadHandler());
+    Spark.get("viewcsv", new ViewHandler());
     Spark.awaitInitialization();
   }
 
