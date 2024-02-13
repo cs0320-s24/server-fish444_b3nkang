@@ -10,20 +10,24 @@ public class LoadHandler implements Route {
 
   @Override
   public Object handle(Request request, Response response) throws Exception {
-    String filepathParam = request.queryParams("filepath");
-    if (filepathParam == null || filepathParam.isEmpty()) {
-      response.status(400);
-      return throwErrorResponse("filepath is incorrect/invalid");
-    } else if (!filepathParam.contains("data/prod/")) {
-      response.status(400);
-      return throwErrorResponse("filepath is missing 'data/prod/...' root");
-    }
-
     // code in next four lines is copied/adapted in parts from the gearup code and class livecode
     Map<String, Object> responseMap = new HashMap<>();
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Map<String, Object>> adapter =
         moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
+
+    String filepathParam = request.queryParams("filepath");
+    if (filepathParam == null || filepathParam.isEmpty()) {
+      responseMap.put("result", "error_bad_request");
+      responseMap.put("error_details", "endpoint request may be misspelled");
+      responseMap.put("filepath", filepathParam);
+      return adapter.toJson(responseMap);
+    } else if (!filepathParam.contains("data/prod/")) {
+      responseMap.put("result", "error_bad_json");
+      responseMap.put("error_details", "filepath field is ill-formed, missing data/prod at a minimum");
+      responseMap.put("filepath", filepathParam);
+      return adapter.toJson(responseMap);
+    }
 
     try {
       Server.filepath = filepathParam;
