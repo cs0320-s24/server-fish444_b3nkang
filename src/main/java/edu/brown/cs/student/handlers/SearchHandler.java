@@ -27,9 +27,9 @@ public class SearchHandler implements Route {
     String error_type = null;
     String error_message = null;
 
-//    System.out.println(searchvalueParam);
-//    System.out.println(headerString);
-//    System.out.println(columnidentifierParam);
+    //    System.out.println(searchvalueParam);
+    //    System.out.println(headerString);
+    //    System.out.println(columnidentifierParam);
 
     //    System.out.println("PARSED COLUMN: " + columnidentifierParam);
 
@@ -37,12 +37,35 @@ public class SearchHandler implements Route {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Map<String, Object>> adapter =
         moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
-//    System.out.println("1");
+    //    System.out.println("1");
 
+    // validate that csv has been loaded
     if (!Server.loaded) {
       responseMap.put("result", "error_datasource");
       responseMap.put("data", "none returned; csv must be loaded before viewing");
       return adapter.toJson(responseMap);
+    }
+
+    // validation for params
+    List<String> expectedParams = Arrays.asList("searchvalue", "header", "columnidentifier");
+    List<String> mandatoryParams = Arrays.asList("searchvalue", "header");
+    Map<String, String> providedParams = new HashMap<>();
+    for (String param : request.queryParams()) {
+      providedParams.put(param, request.queryParams(param));
+    }
+    for (String key : providedParams.keySet()) {
+      if (!expectedParams.contains(key)) {
+        responseMap.put("result", "error_bad_request");
+        responseMap.put("data", "none returned; unknown/malformed parameter in call");
+        return adapter.toJson(responseMap);
+      }
+    }
+    for (String param : mandatoryParams) {
+      if (!providedParams.containsKey(param) || providedParams.get(param).isEmpty()) {
+        responseMap.put("result", "error_bad_request");
+        responseMap.put("data", "none returned; missing, empty, or malformed parameter(s)");
+        return adapter.toJson(responseMap);
+      }
     }
 
     try {
@@ -66,7 +89,7 @@ public class SearchHandler implements Route {
     Parser<List<String>> stringParser = new Parser<>(csvToRead, new CreateListOfStringsFromRow());
     List<List<String>> parsedStringCSV = stringParser.readReader();
 
-//    System.out.println("2");
+    //    System.out.println("2");
 
     // copied from Ben's CSV
     if (headerString.equals("true")) {
@@ -81,7 +104,7 @@ public class SearchHandler implements Route {
       //          "Error, incorrect 'header' argument passed: argument must either be 'true' or
       // 'false'.");
     }
-//    System.out.println("3");
+    //    System.out.println("3");
 
     // check if "columnIdentifier" provided
     if (columnidentifierParam != null) {
@@ -117,7 +140,7 @@ public class SearchHandler implements Route {
       columnIdentifierType = "NoArgSupplied";
     }
     // end of arg verification
-//    System.out.println("4");
+    //    System.out.println("4");
 
     // logic to call search
     if (columnIdentifierType.equals("int")) {
@@ -154,6 +177,18 @@ public class SearchHandler implements Route {
       //        System.out.println(rowsWithVal);
     } else if (columnIdentifierType.equals("String")) {
       System.out.println("STRING SEARCH");
+      System.out.println(
+          "PARAMS: "
+              + parsedStringCSV
+              + " "
+              + searchvalueParam
+              + " "
+              + columnHeaderIdentifier
+              + " "
+              + columnIdentifierType
+              + " "
+              + header);
+
       Search searchHeader =
           new Search(
               parsedStringCSV,
@@ -186,17 +221,17 @@ public class SearchHandler implements Route {
       //        System.out.println(rowsWithVal);
     } else if (columnIdentifierType.equals("NoArgSupplied")) {
       System.out.println("ARGLESS SEARCH");
-      System.out.println(
-          "PARAMS: "
-              + parsedStringCSV
-              + " "
-              + searchvalueParam
-              + " "
-              + columnHeaderIdentifier
-              + " "
-              + columnIdentifierType
-              + " "
-              + header);
+      //      System.out.println(
+      //          "PARAMS: "
+      //              + parsedStringCSV
+      //              + " "
+      //              + searchvalueParam
+      //              + " "
+      //              + columnHeaderIdentifier
+      //              + " "
+      //              + columnIdentifierType
+      //              + " "
+      //              + header);
       Search searchNoArg =
           new Search(
               parsedStringCSV,
@@ -215,7 +250,7 @@ public class SearchHandler implements Route {
       System.out.println("SOMETHING HAS GONE VERY WRONG.");
     }
     //
-//    System.out.println("5");
+    //    System.out.println("5");
 
     ArrayList<String> params = new ArrayList<>();
     params.add(searchvalueParam);

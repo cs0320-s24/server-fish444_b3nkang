@@ -24,7 +24,8 @@ public class LoadHandler implements Route {
       return adapter.toJson(responseMap);
     } else if (!filepathParam.contains("data/prod/")) {
       responseMap.put("result", "error_bad_json");
-      responseMap.put("error_details", "filepath field is ill-formed, missing data/prod at a minimum");
+      responseMap.put(
+          "error_details", "filepath field is ill-formed, missing data/prod at a minimum");
       responseMap.put("filepath", filepathParam);
       return adapter.toJson(responseMap);
     }

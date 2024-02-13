@@ -88,18 +88,33 @@ public class Search {
   public List<Integer> findRowsWithValueStringArg() {
     ArrayList<Integer> rowsWithValueInCol = new ArrayList<>();
     int rowCount = 0;
-    int colIndex = 0;
+    int colIndex = -1;
+
     for (String value : this.parsedData.get(0)) {
       if (value.equals(this.columnHeaderIdentifier)) {
+        colIndex = rowCount;
         break;
       }
-      colIndex++;
+      rowCount++;
     }
+
+    // validation for if columnidentifier does not exist
+    if (colIndex == -1) {
+      return rowsWithValueInCol;
+    }
+    rowCount = 0;
     for (List<String> row : this.parsedData) {
-      if (rowCount > 0) {
-        String colIndexCleaned = row.get(colIndex).trim();
-        if (colIndexCleaned.equals(this.searchValue.trim())) {
+      if (header) {
+        String colValue = row.get(colIndex).trim();
+        if (colValue.equals(this.searchValue.trim())) {
           rowsWithValueInCol.add(rowCount);
+        }
+      } else if (!(rowCount == 0)) {
+        if (row.size() > colIndex) {
+          String colValue = row.get(colIndex).trim();
+          if (colValue.equals(this.searchValue.trim())) {
+            rowsWithValueInCol.add(rowCount);
+          }
         }
       }
       rowCount++;
