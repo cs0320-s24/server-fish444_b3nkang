@@ -5,13 +5,16 @@ import static spark.Spark.after;
 import edu.brown.cs.student.handlers.*;
 import spark.Spark;
 
-
 public class Server {
+
+  public static String filepath;
+  //  String filepath;
 
   public Server() {
     int port = 3232;
+
     Spark.port(port);
-        /*
+    /*
        Setting CORS headers to allow cross-origin requests from the client; this is necessary for the client to
        be able to make requests to the server.
 
@@ -37,8 +40,12 @@ public class Server {
     Spark.awaitInitialization();
   }
 
+  //  public void setServerFilepath(String filepath){
+  //    this.filepath = filepath;
+  //  }
+
   public static void main(String[] args) {
     Server server = new Server();
+    System.out.println("Server started; exiting main...");
   }
-
 }
