@@ -20,7 +20,9 @@ public class SearchHandler implements Route {
     String searchvalueParam = request.queryParams("searchvalue");
     String headerString = request.queryParams("header");
     String columnidentifierParam = request.queryParams("columnidentifier");
-    System.out.println("PARSED COLUMN: "+columnidentifierParam);
+    String error_type = null;
+    String error_message = null;
+    System.out.println("PARSED COLUMN: " + columnidentifierParam);
 
     // copied from Ben's CSV
     if (headerString.equals("true")) {
@@ -28,8 +30,12 @@ public class SearchHandler implements Route {
     } else if (headerString.equals("false")) {
       header = false;
     } else {
-      throw new IllegalArgumentException(
-          "Error, incorrect \"header\" argument passed: argument must either be \"true\" or \"false\".");
+      error_type = "error_bad_request";
+      error_message =
+          "Error, incorrect \"header\" argument passed: argument must either be \"true\" or \"false\".";
+      //      throw new IllegalArgumentException(
+      //          "Error, incorrect \"header\" argument passed: argument must either be \"true\" or
+      // \"false\".");
     }
 
     // check if "columnIdentifier" provided
@@ -37,8 +43,12 @@ public class SearchHandler implements Route {
       // figure out type columnIdentifier
       try {
         if (!header) {
-          throw new IllegalArgumentException(
-              "Error, columnIdentifier-header argument conflict: header was set to \"false\" but a header-index-based \"columnIdentifier\" was specified.");
+          error_type = "error_bad_request";
+          error_message =
+              "Error, columnIdentifier-header argument conflict: header was set to \"false\" but a header-index-based \"columnIdentifier\" was specified.";
+          //          throw new IllegalArgumentException(
+          //              "Error, columnIdentifier-header argument conflict: header was set to
+          // \"false\" but a header-index-based \"columnIdentifier\" was specified.");
         } else {
           columnIndexIdentifier = Integer.parseInt(columnidentifierParam);
           columnIdentifierType = "int";
@@ -46,8 +56,12 @@ public class SearchHandler implements Route {
       } catch (NumberFormatException e) {
         // check if header has been set to false despite a non-integer param being provided
         if (!header) {
-          throw new IllegalArgumentException(
-              "Error, columnIdentifier-header argument conflict: header was set to \"false\" but a header-name-based \"columnIdentifier\" was specified.");
+          error_type = "error_bad_request";
+          error_message =
+              "Error, columnIdentifier-header argument conflict: header was set to \"false\" but a header-name-based \"columnIdentifier\" was specified.";
+          //          throw new IllegalArgumentException(
+          //              "Error, columnIdentifier-header argument conflict: header was set to
+          // \"false\" but a header-name-based \"columnIdentifier\" was specified.");
         } else {
           columnHeaderIdentifier = columnidentifierParam;
           columnIdentifierType = "String";
@@ -149,9 +163,24 @@ public class SearchHandler implements Route {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Map<String, Object>> adapter =
         moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
-    responseMap.put("result", "success");
-    responseMap.put("data", rowsWithVal);
 
+    ArrayList<String> params = new ArrayList<>();
+    params.add(searchvalueParam);
+    params.add(headerString);
+    params.add(columnidentifierParam);
+
+    if (error_type != null) {
+      responseMap.put("result", error_type);
+      responseMap.put("error_details", error_message);
+      responseMap.put("data", "none returned; bad request params");
+      responseMap.put("parameters", params);
+      responseMap.put("rows_with_params", "none returned; bad request params");
+    } else {
+      responseMap.put("result", "success");
+      responseMap.put("data", Server.parsedStringCSV);
+      responseMap.put("parameters", params);
+      responseMap.put("rows_with_params", rowsWithVal);
+    }
     return adapter.toJson(responseMap);
   }
 }
