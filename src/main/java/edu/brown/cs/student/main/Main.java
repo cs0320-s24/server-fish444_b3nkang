@@ -23,17 +23,17 @@ public final class Main {
    *
    * @param args the command-line arguments made by the user
    */
-  public static void main(String[] args) {
-    try {
-      new Main(args).run();
-    } catch (FileNotFoundException e) {
-      System.err.println("Error caught in main, unreachable file: " + e);
-    } catch (IllegalArgumentException e) {
-      System.err.println("Error caught in main, illegal args: " + e);
-    } catch (Exception e) {
-      System.err.println("Error caught in main, some other unidentified error: " + e);
-    }
-  }
+//  public static void main(String[] args) {
+//    try {
+//      new Main(args).run();
+//    } catch (FileNotFoundException e) {
+//      System.err.println("Error caught in main, unreachable file: " + e);
+//    } catch (IllegalArgumentException e) {
+//      System.err.println("Error caught in main, illegal args: " + e);
+//    } catch (Exception e) {
+//      System.err.println("Error caught in main, some other unidentified error: " + e);
+//    }
+//  }
 
   /**
    * The function which sets up the command-line argument structure and parses it
