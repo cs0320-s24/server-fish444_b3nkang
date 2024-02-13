@@ -1,15 +1,22 @@
 package edu.brown.cs.student.main;
 
+// http://localhost:3232/loadcsv?filepath=data/prod/dol_ri_earnings_disparity.csv
 // http://localhost:3232/loadcsv?filepath=data/prod/stardata.csv
 // http://localhost:3232/viewcsv
+// http://localhost:3232/searchcsv?searchvalue=14%&header=true&columnidentifier=Employed Percent
+
 
 import static spark.Spark.after;
+
 import edu.brown.cs.student.handlers.*;
+import java.util.List;
 import spark.Spark;
 
 public class Server {
 
   public static String filepath;
+  public static List<List<String>> parsedStringCSV;
+
   //  String filepath;
 
   public Server() {
@@ -40,6 +47,7 @@ public class Server {
         });
     Spark.get("loadcsv", new LoadHandler());
     Spark.get("viewcsv", new ViewHandler());
+    Spark.get("searchcsv", new SearchHandler());
     Spark.awaitInitialization();
   }
 
