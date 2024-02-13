@@ -68,6 +68,13 @@ public class Search {
     // NOTE THAT WE DO NOT SEARCH THE HEADER FOR TERMS
     int rowCount = 0;
     int colIndex = this.columnIndexIdentifier;
+    int maxColIndex = this.parsedData.get(0).size() - 1;
+
+    // if out of bounds just return empty list
+    if (this.columnIndexIdentifier < 0 || this.columnIndexIdentifier > maxColIndex) {
+      return rowsWithValueInCol;
+    }
+
     for (List<String> row : this.parsedData) {
       if (!this.header || rowCount > 0) {
         String colIndexStringCleaned = row.get(colIndex).trim();
@@ -79,7 +86,6 @@ public class Search {
     }
     return rowsWithValueInCol;
   }
-
   /**
    * Finds all rows with this.searchValue at a certain column index based on the header name
    *
