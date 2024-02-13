@@ -36,7 +36,8 @@ public class LoadHandler implements Route {
       responseMap.put("result", "success");
       responseMap.put("filepath", filepathParam);
     } catch (FileNotFoundException e) {
-      throwErrorResponse("file passed initial validation but was not found.");
+      responseMap.put("result", "error; file passed initial validation but was not found");
+      responseMap.put("filepath", filepathParam);
     }
     return adapter.toJson(responseMap);
   }
