@@ -13,6 +13,8 @@ public class Search {
   public String columnIdentifierType;
   private boolean header;
 
+
+
   /**
    * Constructor for Search which takes a String columnIdentifier
    *
