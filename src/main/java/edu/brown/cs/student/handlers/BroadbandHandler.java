@@ -126,18 +126,19 @@ public class BroadbandHandler implements Route {
         }
       } else {
         responseMap.put("result", "error_bad_request");
-        responseMap.put("error_details", "state param(s) malformed and not found");
+        responseMap.put("error_details", "state FIELD (e.g. California) malformed and not found");
         return adapter.toJson(responseMap);
       }
     } else {
       responseMap.put("result", "error_bad_request");
-      responseMap.put("error_details", "county param(s) malformed and not found");
+      responseMap.put(
+          "error_details", "state and/or county PARAM(S) (i.e. `state` and/or `county`) malformed");
       return adapter.toJson(responseMap);
     }
     System.out.println("BROADBAND: " + this.broadband);
     if (this.broadband.equals("error_bad_request")) {
       responseMap.put("result", "error_bad_request");
-      responseMap.put("error_details", "state param(s) malformed and not found");
+      responseMap.put("error_details", "county FIELD (e.g. Napa) malformed and not found");
       return adapter.toJson(responseMap);
     }
     // build the successful output if we reach this point
