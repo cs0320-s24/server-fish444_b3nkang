@@ -3,7 +3,8 @@ package edu.brown.cs.student.main;
 // http://localhost:3232/loadcsv?filepath=data/prod/dol_ri_earnings_disparity.csv
 // http://localhost:3232/loadcsv?filepath=data/prod/stardata.csv
 // http://localhost:3232/viewcsv
-// http://localhost:3232/searchcsv?searchvalue=14%&header=true&columnidentifier=Employed Percent
+// http://localhost:3232/searchcsv?searchvalue=14%&header=true&columnidentifier=Employed+Percent
+// http://localhost:3232/broadband?state=California&county=Napa
 
 import static spark.Spark.after;
 
@@ -44,6 +45,7 @@ public class Server {
     Spark.get("loadcsv", new LoadHandler());
     Spark.get("viewcsv", new ViewHandler());
     Spark.get("searchcsv", new SearchHandler());
+    Spark.get("broadband", new BroadbandHandler());
     Spark.awaitInitialization();
   }
 
