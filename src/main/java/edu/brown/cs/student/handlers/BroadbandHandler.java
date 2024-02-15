@@ -16,23 +16,6 @@ public class BroadbandHandler implements Route {
   private String stateCode;
   private String broadband;
 
-  //  @Override
-  //  public Object handle(Request request, Response response) throws Exception {
-  //    Map<String, Object> responseMap = new HashMap<>();
-  //    Moshi moshi = new Moshi.Builder().build();
-  //    JsonAdapter<Map<String, Object>> adapter =
-  //        moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
-  //
-  //    String stateParam = request.queryParams("state");
-  //    String countyParam = request.queryParams("county");
-  //
-  //    System.out.println("State: " + stateParam);
-  //    System.out.println("County: " + countyParam);
-  //    responseMap.put("state", stateParam);
-  //    responseMap.put("county", countyParam);
-  //    return adapter.toJson(responseMap);
-  //  }
-
   @Override
   public Object handle(Request request, Response response) throws Exception {
     // all in one method, no helpers or abstractions, for funsies
