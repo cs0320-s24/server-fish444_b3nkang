@@ -8,17 +8,18 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDateTime;
 import java.util.*;
 import spark.*;
 
 public class BroadbandHandler implements Route {
 
   private String stateCode;
-  private String countyCode;
   private String broadband;
 
   @Override
   public Object handle(Request request, Response response) throws Exception {
+    // all in one method, no helpers or abstractions, for funsies
     Map<String, Object> responseMap = new HashMap<>();
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Map<String, Object>> adapter =
@@ -49,6 +50,7 @@ public class BroadbandHandler implements Route {
             this.stateCode = row.get(1);
             break;
           } else {
+            this.stateCode = "error_bad_request";
             responseMap.put("result", "error_bad_request");
             responseMap.put("error_details", "state param(s) malformed and not found");
             return responseMap;
@@ -56,6 +58,7 @@ public class BroadbandHandler implements Route {
         }
       }
       catch (NullPointerException e) {
+        this.stateCode = "error_not_found";
         responseMap.put("result", "error_datasource");
         responseMap.put("error_details", "internal Census API error");
         return responseMap;
@@ -82,7 +85,9 @@ public class BroadbandHandler implements Route {
               this.broadband = row.get(1);
               break;
             } else {
-              this.broadband = "error_not_found";
+              responseMap.put("result", "error_bad_request");
+              responseMap.put("error_details", "state param(s) malformed and not found");
+              return responseMap;
             }
           }
         }
@@ -96,11 +101,20 @@ public class BroadbandHandler implements Route {
         responseMap.put("error_details", "state param(s) malformed and not found");
         return responseMap;
       }
-    return null;
     } else {
       responseMap.put("result", "error_bad_request");
       responseMap.put("error_details", "state/county param(s) malformed and not found");
       return responseMap;
     }
+
+    // build the successful output if we reach this point
+    LocalDateTime currentTime = LocalDateTime.now();
+    responseMap.put("result", "success");
+    responseMap.put("state", stateParam);
+    responseMap.put("county", countyParam);
+    responseMap.put("broadband_access_percent", this.broadband);
+    responseMap.put("date_and_time", currentTime);
+
+    return responseMap;
   }
 }
