@@ -13,7 +13,9 @@ import spark.*;
 
 public class BroadbandHandler implements Route {
 
-  private String statecode;
+  private String stateCode;
+  private String countyCode;
+  private String broadband;
 
   @Override
   public Object handle(Request request, Response response) throws Exception {
@@ -39,23 +41,66 @@ public class BroadbandHandler implements Route {
 
       // build the type format
       Moshi moshi2 = new Moshi.Builder().build();
-      Type listOfListOfStrings = Types.newParameterizedType(List.class, Types.newParameterizedType(List.class, String.class));
-      JsonAdapter<List<List<String>>> adapter2 = moshi2.adapter(listOfListOfStrings);
+      JsonAdapter<List<List<String>>> adapter2 = moshi2.adapter(Types.newParameterizedType(List.class, Types.newParameterizedType(List.class, String.class)));
       List<List<String>> responseLoS = adapter2.fromJson(sentBoredApiResponse.body());
       try {
         for (List<String> row : responseLoS) {
           if (row.get(0).equals(stateParam)) {
-            this.statecode = row.get(1);
+            this.stateCode = row.get(1);
             break;
           } else {
-            this.statecode = "error_not_found";
+            responseMap.put("result", "error_bad_request");
+            responseMap.put("error_details", "state param(s) malformed and not found");
+            return responseMap;
           }
         }
       }
       catch (NullPointerException e) {
-        this.statecode = "error_bad_request";
+        responseMap.put("result", "error_datasource");
+        responseMap.put("error_details", "internal Census API error");
+        return responseMap;
       }
-    }
+
+      if (!this.stateCode.equals("error_bad_request") && !this.stateCode.equals("error_not_found")){
+        // finding the county code
+        HttpRequest buildBoredApiRequest2 =
+            HttpRequest.newBuilder()
+                .uri(new URI("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:"+this.stateCode))
+                .GET()
+                .build();
+        HttpResponse<String> sentBoredApiResponse2 =
+            HttpClient.newBuilder()
+                .build()
+                .send(buildBoredApiRequest2, HttpResponse.BodyHandlers.ofString());
+        // build the type format, this time for county
+        Moshi moshi3 = new Moshi.Builder().build();
+        JsonAdapter<List<List<String>>> adapter3 = moshi3.adapter(Types.newParameterizedType(List.class, Types.newParameterizedType(List.class, String.class)));
+        List<List<String>> responseLoS2 = adapter3.fromJson(sentBoredApiResponse2.body());
+        try {
+          for (List<String> row : responseLoS2) {
+            if (row.contains(countyParam+" County, "+stateParam)) {
+              this.broadband = row.get(1);
+              break;
+            } else {
+              this.broadband = "error_not_found";
+            }
+          }
+        }
+        catch (NullPointerException e) {
+          responseMap.put("result", "error_datasource");
+          responseMap.put("error_details", "internal Census API error");
+          return responseMap;
+        }
+      } else {
+        responseMap.put("result", "error_bad_request");
+        responseMap.put("error_details", "state param(s) malformed and not found");
+        return responseMap;
+      }
     return null;
+    } else {
+      responseMap.put("result", "error_bad_request");
+      responseMap.put("error_details", "state/county param(s) malformed and not found");
+      return responseMap;
+    }
   }
 }
