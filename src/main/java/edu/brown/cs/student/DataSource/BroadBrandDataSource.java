@@ -1,5 +1,3 @@
 package edu.brown.cs.student.DataSource;
 
-public class BroadBrandDataSource {
-
-}
+public class BroadBrandDataSource {}
