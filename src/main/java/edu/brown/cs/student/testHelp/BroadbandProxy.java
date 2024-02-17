@@ -1,42 +1,22 @@
 package edu.brown.cs.student.testHelp;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.Iterator;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.List;
-import java.util.ListIterator;
 
-public class BroadbandProxy implements List<List<String>> {
-    private List<List<String>> target;
-
-    public BroadbandProxy(List<List<String>> target) {
-        this.target = target;
+public class BroadbandProxy {
+    public static List<List<String>> createProxy(List<List<String>> target) {
+        return (List<List<String>>) Proxy.newProxyInstance(
+                BroadbandProxy.class.getClassLoader(),
+                new Class<?>[] { List.class },
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        // Add custom behavior before or after delegating to the target list
+                        // For simplicity, this example just delegates all calls directly to the target list
+                        return method.invoke(target, args);
+                    }
+                }
+        );
     }
-
-    // Implement List interface methods
-    @Override
-    public int size() {
-        return target.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return target.isEmpty();
-    }
-
-    // Implement other List interface methods as needed
-
-    // Additional methods for proxy behavior
-    public void addRow(List<String> row) {
-        // Add additional behavior before or after delegating to the target list
-        target.add(row);
-    }
-
-    public List<String> getRow(int index) {
-        // Add additional behavior before or after delegating to the target list
-        return target.get(index);
-    }
-
-    // Implement other custom methods as needed
-
 }
