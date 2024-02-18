@@ -77,8 +77,10 @@ public class TestSoupAPIHandlers {
         this.menu.clear();
 
         // In fact, restart the entire Spark server for every test!
-        Spark.get("order", new OrderHandler(menu));
-        Spark.get("activity", new ActivityHandler());
+        Spark.get("loadcsv", new LoadHandler());
+        Spark.get("viewcsv", new ViewHandler());
+        Spark.get("searchcsv", new SearchHandler());
+        Spark.get("broadband", new BroadbandHandler());
         Spark.init();
         Spark.awaitInitialization(); // don't continue until the server is listening
     }
@@ -86,8 +88,10 @@ public class TestSoupAPIHandlers {
     @AfterEach
     public void teardown() {
         // Gracefully stop Spark listening on both endpoints after each test
-        Spark.unmap("order");
-        Spark.unmap("activity");
+        Spark.unmap("loadcsv");
+        Spark.unmap("viewcsv");
+        Spark.unmap("searchcsv");
+        Spark.unmap("broadband");
         Spark.awaitStop(); // don't proceed until the server is stopped
     }
 

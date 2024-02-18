@@ -16,9 +16,6 @@ public class BroadbandHandler implements Route {
 
   private String stateCode;
   private String broadband;
-  private BroadbandProxy proxyResponseLoS = new BroadbandProxy(null);
-
-  private BroadbandProxy proxyResponseLoS2 = new BroadbandProxy(null);
 
   @Override
   public Object handle(Request request, Response response) throws Exception {
@@ -35,25 +32,32 @@ public class BroadbandHandler implements Route {
     System.out.println("County: " + countyParam);
 
     if (stateParam != null && countyParam != null) {
+      System.out.println("is passed through");
       // code below taken from gearup (not bothering to change var names)
       HttpRequest buildBoredApiRequest =
           HttpRequest.newBuilder()
               .uri(new URI("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:*"))
               .GET()
               .build();
+      System.out.println(1);
       HttpResponse<String> sentBoredApiResponse =
           HttpClient.newBuilder()
               .build()
               .send(buildBoredApiRequest, HttpResponse.BodyHandlers.ofString());
+      System.out.println(2);
 
       // build the type format
       Moshi moshi2 = new Moshi.Builder().build();
+      System.out.println(3);
       JsonAdapter<List<List<String>>> adapter2 =
           moshi2.adapter(
               Types.newParameterizedType(
                   List.class, Types.newParameterizedType(List.class, String.class)));
-      this.proxyResponseLoS = new BroadbandProxy(adapter2.fromJson(sentBoredApiResponse.body()));
+      System.out.println(4);
+      System.out.println(sentBoredApiResponse.body());
+      BroadbandProxy proxyResponseLoS = new BroadbandProxy(adapter2.fromJson(sentBoredApiResponse.body()));
       //      System.out.println("REPOLOS 1: " + responseLoS);
+      System.out.println(proxyResponseLoS);
       try {
         for (List<String> row : proxyResponseLoS) {
           //          System.out.println("STATE: " + stateParam + "ROW: " + row);
@@ -93,8 +97,7 @@ public class BroadbandHandler implements Route {
             moshi3.adapter(
                 Types.newParameterizedType(
                     List.class, Types.newParameterizedType(List.class, String.class)));
-        this.proxyResponseLoS2 =
-            new BroadbandProxy(adapter3.fromJson(sentBoredApiResponse2.body()));
+        BroadbandProxy proxyResponseLoS2 = new BroadbandProxy(adapter3.fromJson(sentBoredApiResponse2.body()));
         //        System.out.println("REPOLOS 2: " + responseLoS2);
         try {
           for (List<String> row : proxyResponseLoS2) {
