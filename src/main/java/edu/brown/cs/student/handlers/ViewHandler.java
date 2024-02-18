@@ -13,8 +13,17 @@ import java.util.List;
 import java.util.Map;
 import spark.*;
 
+/**
+ * A class to view a loaded CSV's data.
+ */
 public class ViewHandler implements Route {
 
+  /**
+   * A method to handle the request made when the endpoint is hit and to return an appropriate
+   * JSON response.
+   *
+   * @return a JSON-like string
+   */
   @Override
   public Object handle(Request request, Response response) throws Exception {
     Map<String, Object> responseMap = new HashMap<>();
