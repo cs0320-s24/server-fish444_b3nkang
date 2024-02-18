@@ -3,14 +3,13 @@ package edu.brown.cs.student.handlers;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
+import edu.brown.cs.student.Proxys.BroadbandProxy;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.*;
-
-import edu.brown.cs.student.testHelp.BroadbandProxy;
 import spark.*;
 
 public class BroadbandHandler implements Route {
@@ -94,7 +93,8 @@ public class BroadbandHandler implements Route {
             moshi3.adapter(
                 Types.newParameterizedType(
                     List.class, Types.newParameterizedType(List.class, String.class)));
-        this.proxyResponseLoS2 = new BroadbandProxy(adapter3.fromJson(sentBoredApiResponse2.body()));
+        this.proxyResponseLoS2 =
+            new BroadbandProxy(adapter3.fromJson(sentBoredApiResponse2.body()));
         //        System.out.println("REPOLOS 2: " + responseLoS2);
         try {
           for (List<String> row : proxyResponseLoS2) {
