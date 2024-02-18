@@ -1,70 +1,161 @@
 package edu.brown.cs.student.testHelp;
-/**
- import java.lang.reflect.InvocationHandler;
- import java.lang.reflect.Method;
- import java.lang.reflect.Proxy;
- import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
- public class BroadbandProxy {
- public static List<List<String>> createProxy(List<List<String>> target) {
- return (List<List<String>>) Proxy.newProxyInstance(BroadbandProxy.class.getClassLoader(),
- new Class<?>[] { List.class }, new InvocationHandler() {
-@Override
-public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-// Add custom behavior before or after delegating to the target list
-// For simplicity, this example just delegates all calls directly to the target list
-return method.invoke(target, args);
-}
-});
- }
- }
- **/
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
-public class BroadbandProxy {
-    @SuppressWarnings("unchecked")
-    public static List<List<String>> createProxy(List<List<String>> target) {
-        return (List<List<String>>) Proxy.newProxyInstance(
-                BroadbandProxy.class.getClassLoader(),
-                new Class<?>[] { List.class },
-                new InvocationHandler() {
-                    @Override
-                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        if (method.getName().equals("get")) {
-                            // Intercepting the "get" method
-                            System.out.println("Intercepted the 'get' method");
-                            // For simplicity, returning null here; you should provide the actual implementation
-                            return target.get(proxy.hashCode());
-                        } else {
-                            // For other methods, delegate to the target list
-                            return method.invoke(target, args);
-                        }
-                    }
-                }
-        );
+public class BroadbandProxy implements List<List<String>> {
+
+
+    /**
+     * user Implement other custom methods as needed
+     */
+    private List<List<String>> target;
+
+    public BroadbandProxy(List<List<String>> target) {
+        this.target = target;
     }
 
-    public static void main(String[] args) {
-        // Create a list of lists
-        List<List<String>> originalList = List.of(
-                List.of("apple", "banana", "orange"),
-                List.of("cat", "dog", "fish"),
-                List.of("red", "green", "blue")
-        );
-
-        // Create a proxy for the list of lists
-        List<List<String>> proxy = createProxy(originalList);
-
-        // Test the proxy
-        System.out.println(proxy.get(0));  // This will trigger the "get" method and print the message
-        System.out.println(proxy.size());   // This will not be intercepted
-
-        // You should provide the actual implementation for the "get" method
+    // Implement List interface methods
+    @Override
+    public int size() {
+        return target.size();
     }
+
+    @Override
+    public boolean isEmpty() {
+        return target.isEmpty();
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        return this.contains(o);
+    }
+
+    @NotNull
+    @Override
+    public Iterator<List<String>> iterator() {
+        return this.target.iterator();
+    }
+
+    @NotNull
+    @Override
+    public Object[] toArray() {
+        return new Object[0];
+    }
+
+    @NotNull
+    @Override
+    public <T> T[] toArray(@NotNull T[] a) {
+        return this.target.toArray(a);
+    }
+
+    @Override
+    public boolean add(List<String> strings) {
+        return this.target.add(strings);
+    }
+
+    @Override
+    public boolean remove(Object o) {
+
+        return this.target.remove(o);
+    }
+
+    @Override
+    public boolean containsAll(@NotNull Collection<?> c) {
+        return this.target.contains(c);
+    }
+
+    @Override
+    public boolean addAll(@NotNull Collection<? extends List<String>> c) {
+        return this.target.addAll(c);
+    }
+
+    @Override
+    /**
+     * implement how you want
+     */
+    public boolean addAll(int index, @NotNull Collection<? extends List<String>> c) {
+        return false;
+    }
+
+    @Override
+    public boolean removeAll(@NotNull Collection<?> c) {
+        return this.target.removeAll(c);
+    }
+
+    @Override
+    public boolean retainAll(@NotNull Collection<?> c) {
+        return this.target.retainAll(c);
+    }
+
+    @Override
+    public void clear() {
+        this.target.clear();
+    }
+
+    @Override
+    public List<String> get(int index) {
+        return this.target.get(index);
+    }
+
+    @Override
+    public List<String> set(int index, List<String> element) {
+        return this.set(index, element);
+    }
+
+    @Override
+    public void add(int index, List<String> element) {
+        this.target.add(index, element);
+
+    }
+
+    @Override
+    public List<String> remove(int index) {
+        return this.target.remove(index);
+    }
+
+    @Override
+    public int indexOf(Object o) {
+        return this.target.indexOf(o);
+    }
+
+    @Override
+    public int lastIndexOf(Object o) {
+        return this.target.lastIndexOf(o);
+    }
+
+    @NotNull
+    @Override
+    public ListIterator<List<String>> listIterator() {
+        return this.target.listIterator();
+    }
+
+    @NotNull
+    @Override
+    public ListIterator<List<String>> listIterator(int index) {
+        return this.target.listIterator();
+    }
+
+    @NotNull
+    @Override
+    public List<List<String>> subList(int fromIndex, int toIndex) {
+        return this.target.subList(fromIndex, toIndex);
+    }
+
+    // Implement other List interface methods as needed
+
+    // Additional methods for proxy behavior
+    public void addRow(List<String> row) {
+        // Add additional behavior before or after delegating to the target list
+        this.target.add(row);
+    }
+
+    public List<String> getRow(int index) {
+        // Add additional behavior before or after delegating to the target list
+        return this.target.get(index);
+    }
+
 }
-
-
