@@ -54,7 +54,6 @@ public class BroadbandHandler implements Route {
               Types.newParameterizedType(
                   List.class, Types.newParameterizedType(List.class, String.class)));
       this.proxyResponseLoS = new BroadbandProxy(adapter2.fromJson(sentBoredApiResponse.body()));
-      List<List<String>> responseLoS = adapter2.fromJson(sentBoredApiResponse.body());
       //      System.out.println("REPOLOS 1: " + responseLoS);
       try {
         for (List<String> row : proxyResponseLoS) {
@@ -96,7 +95,6 @@ public class BroadbandHandler implements Route {
                 Types.newParameterizedType(
                     List.class, Types.newParameterizedType(List.class, String.class)));
         this.proxyResponseLoS2 = new BroadbandProxy(adapter3.fromJson(sentBoredApiResponse2.body()));
-        List<List<String>> responseLoS2 = adapter3.fromJson(sentBoredApiResponse2.body());
         //        System.out.println("REPOLOS 2: " + responseLoS2);
         try {
           for (List<String> row : proxyResponseLoS2) {
