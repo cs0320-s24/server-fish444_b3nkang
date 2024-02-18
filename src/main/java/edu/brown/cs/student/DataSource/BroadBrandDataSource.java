@@ -18,6 +18,8 @@ import java.util.Map;
 
 public class BroadBrandDataSource {
 
+    public BroadbandProxy proxyResponseLoS = new BroadbandProxy(null);
+    public BroadbandProxy proxyResponseLoS2 = new BroadbandProxy(null);
     private String stateCode;
     private String broadband;
 
@@ -30,7 +32,6 @@ public class BroadBrandDataSource {
 
         String stateParam = request.queryParams("state");
         String countyParam = request.queryParams("county");
-
         System.out.println("State: " + stateParam);
         System.out.println("County: " + countyParam);
 
@@ -53,7 +54,7 @@ public class BroadBrandDataSource {
                             Types.newParameterizedType(
                                     List.class, Types.newParameterizedType(List.class, String.class)));
 
-            BroadbandProxy proxyResponseLoS = new BroadbandProxy(adapter2.fromJson(sentBoredApiResponse.body()));
+            this.proxyResponseLoS = new BroadbandProxy(adapter2.fromJson(sentBoredApiResponse.body()));
             List<List<String>> responseLoS = adapter2.fromJson(sentBoredApiResponse.body());
             //      System.out.println("REPOLOS 1: " + responseLoS);
 
@@ -78,7 +79,7 @@ public class BroadBrandDataSource {
                         moshi3.adapter(
                                 Types.newParameterizedType(
                                         List.class, Types.newParameterizedType(List.class, String.class)));
-                BroadbandProxy proxyResponseLoS2 = new BroadbandProxy(adapter3.fromJson(sentBoredApiResponse2.body()));
+                this.proxyResponseLoS2 = new BroadbandProxy(adapter3.fromJson(sentBoredApiResponse2.body()));
                 List<List<String>> responseLoS2 = adapter3.fromJson(sentBoredApiResponse2.body());
                 //        System.out.println("REPOLOS 2: " + responseLoS2);
                 try {
@@ -125,6 +126,14 @@ public class BroadBrandDataSource {
         //    System.out.println(adapter.toJson(responseMap));
         //    System.out.println("after print");
         return adapter.toJson(responseMap);
+    }
+
+    public BroadbandProxy getProxyResponseLoS() {
+        return this.proxyResponseLoS;
+    }
+
+    public BroadbandProxy getProxyResponseLoS2() {
+        return proxyResponseLoS2;
     }
 }
 

@@ -9,12 +9,17 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import edu.brown.cs.student.testHelp.BroadbandProxy;
 import spark.*;
 
 public class BroadbandHandler implements Route {
 
   private String stateCode;
   private String broadband;
+  private BroadbandProxy proxyResponseLoS = new BroadbandProxy(null);
+
+  private BroadbandProxy proxyResponseLoS2 = new BroadbandProxy(null);
 
   @Override
   public Object handle(Request request, Response response) throws Exception {
@@ -48,10 +53,11 @@ public class BroadbandHandler implements Route {
           moshi2.adapter(
               Types.newParameterizedType(
                   List.class, Types.newParameterizedType(List.class, String.class)));
+      this.proxyResponseLoS = new BroadbandProxy(adapter2.fromJson(sentBoredApiResponse.body()));
       List<List<String>> responseLoS = adapter2.fromJson(sentBoredApiResponse.body());
       //      System.out.println("REPOLOS 1: " + responseLoS);
       try {
-        for (List<String> row : responseLoS) {
+        for (List<String> row : proxyResponseLoS) {
           //          System.out.println("STATE: " + stateParam + "ROW: " + row);
           if (row.contains(stateParam)) {
             this.stateCode = row.get(1);
@@ -89,10 +95,11 @@ public class BroadbandHandler implements Route {
             moshi3.adapter(
                 Types.newParameterizedType(
                     List.class, Types.newParameterizedType(List.class, String.class)));
+        this.proxyResponseLoS2 = new BroadbandProxy(adapter3.fromJson(sentBoredApiResponse2.body()));
         List<List<String>> responseLoS2 = adapter3.fromJson(sentBoredApiResponse2.body());
         //        System.out.println("REPOLOS 2: " + responseLoS2);
         try {
-          for (List<String> row : responseLoS2) {
+          for (List<String> row : proxyResponseLoS2) {
             //            System.out.println("COUNTY: " + countyParam + "ROW: " + row);
             if (row.contains(countyParam + " County, " + stateParam)) {
               this.broadband = row.get(1);
