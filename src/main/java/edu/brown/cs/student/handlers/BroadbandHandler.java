@@ -51,24 +51,17 @@ public class BroadbandHandler implements Route {
                             .uri(new URI("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:*"))
                             .GET()
                             .build();
-            System.out.println(1);
             HttpResponse<String> sentBoredApiResponse =
                     HttpClient.newBuilder()
                             .build()
                             .send(buildBoredApiRequest, HttpResponse.BodyHandlers.ofString());
-            System.out.println(2);
 
             // build the type format
             Moshi moshi2 = new Moshi.Builder().build();
-            System.out.println(3);
             JsonAdapter<List<List<String>>> adapter2 =
                     moshi2.adapter(
                             Types.newParameterizedType(
                                     List.class, Types.newParameterizedType(List.class, String.class)));
-            System.out.println(4);
-            System.out.println(sentBoredApiResponse.body());
-            System.out.println(5);
-            System.out.println(adapter2.fromJson(sentBoredApiResponse.body()));
             BroadbandProxy proxyResponseLoS = new BroadbandProxy(adapter2.fromJson(sentBoredApiResponse.body()));
             //      System.out.println("REPOLOS 1: " + responseLoS);
             System.out.println(proxyResponseLoS);
