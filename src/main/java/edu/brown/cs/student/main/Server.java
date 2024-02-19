@@ -15,6 +15,7 @@ import static spark.Spark.after;
 import edu.brown.cs.student.handlers.*;
 import spark.Spark;
 
+/** The class which contains the server and calls handlers as the endpoints are hit. */
 public class Server {
 
   public static String filepath;
@@ -57,6 +58,11 @@ public class Server {
   //    this.filepath = filepath;
   //  }
 
+  /**
+   * The main method, which starts the server.
+   *
+   * @param args command-line arguments (not necessary)
+   */
   public static void main(String[] args) {
     Server server = new Server();
     System.out.println("Server started; exiting main...");

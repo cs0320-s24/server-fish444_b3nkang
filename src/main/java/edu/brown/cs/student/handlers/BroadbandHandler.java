@@ -11,11 +11,21 @@ import java.time.LocalDateTime;
 import java.util.*;
 import spark.*;
 
+/**
+ * A class to handle API requests to the broadband endpoint, returning a JSON string with the
+ * percentage of households with broadband access within a given county.
+ */
 public class BroadbandHandler implements Route {
 
   private String stateCode;
   private String broadband;
 
+  /**
+   * A method to handle the request made when the endpoint is hit and to return an appropriate
+   * JSON response.
+   *
+   * @return a JSON-like string
+   */
   @Override
   public Object handle(Request request, Response response) throws Exception {
     // all in one method, no helpers or abstractions, for funsies

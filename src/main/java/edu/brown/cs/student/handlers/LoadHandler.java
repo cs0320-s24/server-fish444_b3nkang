@@ -3,11 +3,20 @@ package edu.brown.cs.student.handlers;
 import com.squareup.moshi.*;
 import edu.brown.cs.student.main.Server;
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import spark.*;
 
+/** A handler that loads the file from a */
 public class LoadHandler implements Route {
 
+  /**
+   * A method to handle the request made when the endpoint is hit and to return an appropriate
+   * JSON response.
+   *
+   * @return a JSON-like string
+   */
   @Override
   public Object handle(Request request, Response response) throws Exception {
     // code in next four lines is copied/adapted in parts from the gearup code and class livecode
@@ -22,10 +31,14 @@ public class LoadHandler implements Route {
       responseMap.put("error_details", "endpoint request may be misspelled");
       responseMap.put("filepath", filepathParam);
       return adapter.toJson(responseMap);
-    } else if (!filepathParam.contains("data/prod/")) {
+    }
+
+    // add additional checking to ensure restriction to given dir
+    Path basePath = Paths.get("data/prod/").toAbsolutePath().normalize();
+    Path filePath = basePath.resolve(filepathParam).normalize();
+    if (!filePath.startsWith(basePath)) {
       responseMap.put("result", "error_bad_json");
-      responseMap.put(
-          "error_details", "filepath field is ill-formed, missing data/prod at a minimum");
+      responseMap.put("error_details", "Access denied. Filepath traversal is not allowed.");
       responseMap.put("filepath", filepathParam);
       return adapter.toJson(responseMap);
     }

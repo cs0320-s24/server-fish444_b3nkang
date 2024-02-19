@@ -11,6 +11,11 @@ import java.util.*;
 import spark.*;
 
 // NOTE YOU MUST USE `+` FOR SPACES IN URL
+
+/**
+ * A class to search a loaded CSV file for a certain term, with flexibility for searching within a
+ * specific row.
+ */
 public class SearchHandler implements Route {
   // copied from Ben's CSV
   private String columnHeaderIdentifier;
@@ -19,6 +24,12 @@ public class SearchHandler implements Route {
   public String columnIdentifierType;
   private List<Integer> rowsWithVal;
 
+  /**
+   * A method to handle the request made when the endpoint is hit and to return an appropriate
+   * JSON response.
+   *
+   * @return a JSON-like string
+   */
   @Override
   public Object handle(Request request, Response response) throws Exception {
     String searchvalueParam = request.queryParams("searchvalue");
