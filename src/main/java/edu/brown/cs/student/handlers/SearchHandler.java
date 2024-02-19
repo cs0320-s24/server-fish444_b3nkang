@@ -11,6 +11,11 @@ import java.util.*;
 import spark.*;
 
 // NOTE YOU MUST USE `+` FOR SPACES IN URL
+
+/**
+ * A class to search a loaded CSV file for a certain term, with flexibility for searching within a
+ * specific row.
+ */
 public class SearchHandler implements Route {
   // copied from Ben's CSV
   private String columnHeaderIdentifier;
@@ -19,6 +24,12 @@ public class SearchHandler implements Route {
   public String columnIdentifierType;
   private List<Integer> rowsWithVal;
 
+  /**
+   * A method to handle the request made when the endpoint is hit and to return an appropriate
+   * JSON response.
+   *
+   * @return a JSON-like string
+   */
   @Override
   public Object handle(Request request, Response response) throws Exception {
     String searchvalueParam = request.queryParams("searchvalue");
@@ -36,7 +47,7 @@ public class SearchHandler implements Route {
     Map<String, Object> responseMap = new HashMap<>();
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Map<String, Object>> adapter =
-        moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
+            moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
     //    System.out.println("1");
 
     // validate that csv has been loaded
@@ -99,7 +110,7 @@ public class SearchHandler implements Route {
     } else {
       error_type = "error_bad_request";
       error_message =
-          "Error, incorrect 'header' argument passed: argument must either be 'true' or 'false'.";
+              "Error, incorrect 'header' argument passed: argument must either be 'true' or 'false'.";
       //      throw new IllegalArgumentException(
       //          "Error, incorrect 'header' argument passed: argument must either be 'true' or
       // 'false'.");
@@ -113,7 +124,7 @@ public class SearchHandler implements Route {
         if (!header) {
           error_type = "error_bad_request";
           error_message =
-              "Error, columnIdentifier-header argument conflict: header was set to 'false' but a header-index-based 'columnIdentifier' was specified.";
+                  "Error, columnIdentifier-header argument conflict: header was set to 'false' but a header-index-based 'columnIdentifier' was specified.";
           //          throw new IllegalArgumentException(
           //              "Error, columnIdentifier-header argument conflict: header was set to
           // 'false' but a header-index-based 'columnIdentifier' was specified.");
@@ -126,7 +137,7 @@ public class SearchHandler implements Route {
         if (!header) {
           error_type = "error_bad_request";
           error_message =
-              "Error, columnIdentifier-header argument conflict: header was set to 'false' but a header-name-based 'columnIdentifier' was specified.";
+                  "Error, columnIdentifier-header argument conflict: header was set to 'false' but a header-name-based 'columnIdentifier' was specified.";
           //          throw new IllegalArgumentException(
           //              "Error, columnIdentifier-header argument conflict: header was set to
           // 'false' but a header-name-based 'columnIdentifier' was specified.");
@@ -146,76 +157,76 @@ public class SearchHandler implements Route {
     if (columnIdentifierType.equals("int")) {
       System.out.println("INT SEARCH");
       Search searchIndex =
-          new Search(
-              parsedStringCSV,
-              searchvalueParam,
-              columnIndexIdentifier,
-              columnIdentifierType,
-              header);
+              new Search(
+                      parsedStringCSV,
+                      searchvalueParam,
+                      columnIndexIdentifier,
+                      columnIdentifierType,
+                      header);
       rowsWithVal = searchIndex.findRowsWithValueIndexArg();
       if (!rowsWithVal.isEmpty()) {
         System.out.println(
-            "Searching for `"
-                + searchvalueParam
-                + "` in the column with index `"
-                + columnIndexIdentifier
-                + "` in `"
-                + Server.filepath
-                + ",");
+                "Searching for `"
+                        + searchvalueParam
+                        + "` in the column with index `"
+                        + columnIndexIdentifier
+                        + "` in `"
+                        + Server.filepath
+                        + ",");
         System.out.println("your search term was found in the following row(s): " + rowsWithVal);
       } else {
         System.out.println(
-            "Searching for `"
-                + searchvalueParam
-                + "` in the column with index `"
-                + columnIndexIdentifier
-                + "` in `"
-                + Server.filepath
-                + ",");
+                "Searching for `"
+                        + searchvalueParam
+                        + "` in the column with index `"
+                        + columnIndexIdentifier
+                        + "` in `"
+                        + Server.filepath
+                        + ",");
         System.out.println("your search term was found in the following row(s): none");
       }
       //        System.out.println(rowsWithVal);
     } else if (columnIdentifierType.equals("String")) {
       System.out.println("STRING SEARCH");
       System.out.println(
-          "PARAMS: "
-              + parsedStringCSV
-              + " "
-              + searchvalueParam
-              + " "
-              + columnHeaderIdentifier
-              + " "
-              + columnIdentifierType
-              + " "
-              + header);
+              "PARAMS: "
+                      + parsedStringCSV
+                      + " "
+                      + searchvalueParam
+                      + " "
+                      + columnHeaderIdentifier
+                      + " "
+                      + columnIdentifierType
+                      + " "
+                      + header);
 
       Search searchHeader =
-          new Search(
-              parsedStringCSV,
-              searchvalueParam,
-              columnHeaderIdentifier,
-              columnIdentifierType,
-              header);
+              new Search(
+                      parsedStringCSV,
+                      searchvalueParam,
+                      columnHeaderIdentifier,
+                      columnIdentifierType,
+                      header);
       rowsWithVal = searchHeader.findRowsWithValueStringArg();
       if (!rowsWithVal.isEmpty()) {
         System.out.println(
-            "Searching for `"
-                + searchvalueParam
-                + "` in the column with header `"
-                + columnHeaderIdentifier
-                + "` in `"
-                + Server.filepath
-                + "`,");
+                "Searching for `"
+                        + searchvalueParam
+                        + "` in the column with header `"
+                        + columnHeaderIdentifier
+                        + "` in `"
+                        + Server.filepath
+                        + "`,");
         System.out.println("your search term was found in the following row(s): " + rowsWithVal);
       } else {
         System.out.println(
-            "Searching for `"
-                + searchvalueParam
-                + "` in the column with header `"
-                + columnHeaderIdentifier
-                + "` in `"
-                + Server.filepath
-                + "`,");
+                "Searching for `"
+                        + searchvalueParam
+                        + "` in the column with header `"
+                        + columnHeaderIdentifier
+                        + "` in `"
+                        + Server.filepath
+                        + "`,");
         System.out.println("your search term was found in the following row(s): none");
       }
       //        System.out.println(rowsWithVal);
@@ -233,16 +244,16 @@ public class SearchHandler implements Route {
       //              + " "
       //              + header);
       Search searchNoArg =
-          new Search(
-              parsedStringCSV,
-              searchvalueParam,
-              columnHeaderIdentifier,
-              columnIdentifierType,
-              header);
+              new Search(
+                      parsedStringCSV,
+                      searchvalueParam,
+                      columnHeaderIdentifier,
+                      columnIdentifierType,
+                      header);
       rowsWithVal = searchNoArg.findRowsWithValueNoArg();
       if (!rowsWithVal.isEmpty()) {
         System.out.println(
-            "Searching for `" + searchvalueParam + "` in the whole of `" + Server.filepath + "`,");
+                "Searching for `" + searchvalueParam + "` in the whole of `" + Server.filepath + "`,");
         System.out.println("your search term was found in the following row(s): " + rowsWithVal);
       }
       //        System.out.println(rowsWithVal);

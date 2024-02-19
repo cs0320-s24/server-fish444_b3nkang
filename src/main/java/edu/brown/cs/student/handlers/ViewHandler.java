@@ -13,14 +13,23 @@ import java.util.List;
 import java.util.Map;
 import spark.*;
 
+/**
+ * A class to view a loaded CSV's data.
+ */
 public class ViewHandler implements Route {
 
+  /**
+   * A method to handle the request made when the endpoint is hit and to return an appropriate
+   * JSON response.
+   *
+   * @return a JSON-like string
+   */
   @Override
   public Object handle(Request request, Response response) throws Exception {
     Map<String, Object> responseMap = new HashMap<>();
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Map<String, Object>> adapter =
-        moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
+            moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
 
     if (!Server.loaded) {
       responseMap.put("result", "error_datasource");
@@ -30,7 +39,7 @@ public class ViewHandler implements Route {
       try {
         FileReader csvToRead = new FileReader(Server.filepath);
         Parser<List<String>> stringParser =
-            new Parser<>(csvToRead, new CreateListOfStringsFromRow());
+                new Parser<>(csvToRead, new CreateListOfStringsFromRow());
         List<List<String>> parsedStringCSV = stringParser.readReader();
         responseMap.put("result", "success");
         responseMap.put("data", parsedStringCSV);

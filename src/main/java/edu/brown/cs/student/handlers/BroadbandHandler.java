@@ -12,11 +12,22 @@ import java.time.LocalDateTime;
 import java.util.*;
 import spark.*;
 
+/**
+ * A class to handle API requests to the broadband endpoint, returning a JSON string with the
+ * percentage of households with broadband access within a given county.
+ */
+
 public class BroadbandHandler implements Route {
 
   private String stateCode;
   private String broadband;
 
+  /**
+   * A method to handle the request made when the endpoint is hit and to return an appropriate
+   * JSON response.
+   *
+   * @return a JSON-like string
+   */
   @Override
   public Object handle(Request request, Response response) throws Exception {
     // all in one method, no helpers or abstractions, for funsies
@@ -36,7 +47,7 @@ public class BroadbandHandler implements Route {
       // code below taken from gearup (not bothering to change var names)
       HttpRequest buildBoredApiRequest =
           HttpRequest.newBuilder()
-              .uri(new URI("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:*"))
+              .uri(new URI("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:" + stateCode))
               .GET()
               .build();
       System.out.println(1);
@@ -55,6 +66,7 @@ public class BroadbandHandler implements Route {
                   List.class, Types.newParameterizedType(List.class, String.class)));
       System.out.println(4);
       System.out.println(sentBoredApiResponse.body());
+      System.out.println(5);
       BroadbandProxy proxyResponseLoS = new BroadbandProxy(adapter2.fromJson(sentBoredApiResponse.body()));
       //      System.out.println("REPOLOS 1: " + responseLoS);
       System.out.println(proxyResponseLoS);
