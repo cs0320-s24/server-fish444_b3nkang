@@ -95,6 +95,9 @@ public class BroadbandHandler implements Route {
                 .send(buildBoredApiRequest2, HttpResponse.BodyHandlers.ofString());
         // build the type format, this time for county
         Moshi moshi3 = new Moshi.Builder().build();
+
+
+
         JsonAdapter<List<List<String>>> adapter3 =
             moshi3.adapter(
                 Types.newParameterizedType(
