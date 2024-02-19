@@ -83,6 +83,7 @@ public class BroadbandHandler implements Route {
                 responseMap.put("error_details", "internal Census API error");
                 return adapter.toJson(responseMap);
             }
+
             System.out.println("STATECODE: " + this.stateCode);
             if (!this.stateCode.equals("error_bad_request")
                     && !this.stateCode.equals("error_not_found")) {
