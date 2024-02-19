@@ -1,4 +1,4 @@
-package edu.brown.cs.student.ServerTesting;
+package edu.brown.cs.student;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -42,7 +42,7 @@ import spark.Spark;
  * <p>Note: if we were doing this for real, we might want to test encoding formats other than UTF-8
  * (StandardCharsets.UTF_8).
  */
-public class TestSoupAPIHandlers {
+public class BroadbandHandlerTest {
 
     @BeforeAll
     public static void setup_before_everything() {
@@ -74,7 +74,7 @@ public class TestSoupAPIHandlers {
     @BeforeEach
     public void setup() {
         // Re-initialize state, etc. for _every_ test method run
-        this.menu.clear();
+        //this.menu.clear();
 
         // In fact, restart the entire Spark server for every test!
         Spark.get("loadcsv", new LoadHandler());
@@ -88,10 +88,10 @@ public class TestSoupAPIHandlers {
     @AfterEach
     public void teardown() {
         // Gracefully stop Spark listening on both endpoints after each test
-        Spark.unmap("loadcsv");
-        Spark.unmap("viewcsv");
-        Spark.unmap("searchcsv");
-        Spark.unmap("broadband");
+        Spark.unmap("/loadcsv");
+        //Spark.unmap("viewcsv");
+        Spark.unmap("/searchcsv");
+        //Spark.unmap("broadband");
         Spark.awaitStop(); // don't proceed until the server is stopped
     }
 
@@ -110,17 +110,17 @@ public class TestSoupAPIHandlers {
 
         // The default method is "GET", which is what we're using here.
         // If we were using "POST", we'd need to say so.
-        clientConnection.setRequestMethod("GET");
-
         clientConnection.connect();
+
         return clientConnection;
     }
+
 
     @Test
     // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
     // checker
     public void testAPINoRecipes() throws IOException {
-        HttpURLConnection clientConnection = tryRequest("order");
+        HttpURLConnection clientConnection = tryRequest("broadband");
         // Get an OK response (the *connection* worked, the *API* provides an error response)
         assertEquals(200, clientConnection.getResponseCode());
 
@@ -133,7 +133,9 @@ public class TestSoupAPIHandlers {
                         .adapter(OrderHandler.SoupNoRecipesFailureResponse.class)
                         .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
-        System.out.println(response);
+
+        BroadbandHandler.
+                System.out.println(response);
         // ^ If that succeeds, we got the expected response. Notice that this is *NOT* an exception, but
         // a real Json reply.
 
