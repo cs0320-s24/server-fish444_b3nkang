@@ -115,7 +115,6 @@ public class BroadbandHandlerTest {
         return clientConnection;
     }
 
-
     @Test
     // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
     // checker
