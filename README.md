@@ -12,7 +12,7 @@ loadcsv, which takes a csv from a given filepath, preparing it for use for futur
 viewcsv, which displays the csv data in its response,
 searchcsv, which takes in a search term and optional specificity arguments to find which rows a given term may be in,
 broadband, which takes in a state and county parameter and returns the %age of inhabitants with broadband access.
-and BroadbandProxy, which is a proxy class that implements List of List of Strings.
+and BroadbandProxy, which is a proxy class that implements List of List of Strings that proxies the ACS querys.
 
 Errors/Bugs
 Various defensive programming measures are taken in this implementation, including the use of path normalization to prevent unauthorized access to files in loadcsv, proxies, caching, and more. Error handling has been implemented so as to not crash the server, but return an informative response of the nature of the error - this goes for loadcsv, viewcsv, searchcsv, and broadband.
