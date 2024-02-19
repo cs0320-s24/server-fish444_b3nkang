@@ -124,8 +124,9 @@ public class BroadbandProxy implements List<List<String>> {
   @NotNull
   @Override
   public ListIterator<List<String>> listIterator() {
-    return this.target.listIterator();
+    return null;
   }
+
 
   @NotNull
   @Override
@@ -140,15 +141,17 @@ public class BroadbandProxy implements List<List<String>> {
   }
 
   // Implement other List interface methods as needed
-
   // Additional methods for proxy behavior
   public void addRow(List<String> row) {
     // Add additional behavior before or after delegating to the target list
     this.target.add(row);
   }
-
   public List<String> getRow(int index) {
     // Add additional behavior before or after delegating to the target list
     return this.target.get(index);
+  }
+  @Override
+  public String toString() {
+     return this.target.toString();
   }
 }

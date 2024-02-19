@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.BreakIterator;
 import java.time.LocalDateTime;
 import java.util.*;
 import spark.*;
@@ -47,7 +48,7 @@ public class BroadbandHandler implements Route {
       // code below taken from gearup (not bothering to change var names)
       HttpRequest buildBoredApiRequest =
           HttpRequest.newBuilder()
-              .uri(new URI("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:" + stateCode))
+              .uri(new URI("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:*"))
               .GET()
               .build();
       System.out.println(1);
@@ -67,6 +68,7 @@ public class BroadbandHandler implements Route {
       System.out.println(4);
       System.out.println(sentBoredApiResponse.body());
       System.out.println(5);
+      System.out.println(adapter2.fromJson(sentBoredApiResponse.body()));
       BroadbandProxy proxyResponseLoS = new BroadbandProxy(adapter2.fromJson(sentBoredApiResponse.body()));
       //      System.out.println("REPOLOS 1: " + responseLoS);
       System.out.println(proxyResponseLoS);
