@@ -2,14 +2,22 @@ package edu.brown.cs.student;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
+import edu.brown.cs.student.Proxys.BroadbandProxy;
 import edu.brown.cs.student.handlers.BroadbandHandler;
 import edu.brown.cs.student.handlers.LoadHandler;
 import edu.brown.cs.student.handlers.SearchHandler;
 import edu.brown.cs.student.handlers.ViewHandler;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +30,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.testng.Assert;
+import spark.Request;
+import spark.Response;
 import spark.Spark;
 
 /**
@@ -41,6 +52,12 @@ import spark.Spark;
  *
  * <p>Note: if we were doing this for real, we might want to test encoding formats other than UTF-8
  * (StandardCharsets.UTF_8).
+ */
+
+
+/**
+ * this is where a data source would be nice, because we would have a method that would get the state codes
+ * and broadband codes instead of just the handler, so it makes testing harder
  */
 public class BroadbandHandlerTest {
 
@@ -169,5 +186,54 @@ public class BroadbandHandlerTest {
         System.out.println(result.get("ingredients"));
         assertEquals(carrot.getIngredients(), result.get("ingredients"));
         clientConnection.disconnect();
+    }
+    @Test
+    public void testAPIStateCode (Request request, Response response, String state) throws IOException, InterruptedException, URISyntaxException {
+        HttpURLConnection clientConnection = tryRequest("state");
+        // Get an OK response (the *connection* worked, the *API* provides an error response)
+        //assertEquals(200, clientConnection.getResponseCode());
+
+        // Now we need to see whether we've got the expected Json response.
+        // SoupAPIUtilities handles ingredient lists, but that's not what we've got here.
+        // NOTE:   (How could we reduce the code repetition?)
+        Moshi moshi = new Moshi.Builder().build();
+
+        JsonAdapter<Map<String, Object>> adapter =
+                moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
+
+
+        String stateParam = request.queryParams("state");
+        String countyParam = request.queryParams("county");
+
+        System.out.println("State: " + stateParam);
+        System.out.println("County: " + countyParam);
+
+        if (stateParam != null && countyParam != null) {
+            System.out.println("is passed through");
+            // code below taken from gearup (not bothering to change var names)
+            HttpRequest buildBoredApiRequest =
+                    HttpRequest.newBuilder()
+                            .uri(new URI("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:*"))
+                            .GET()
+                            .build();
+            HttpResponse<String> sentBoredApiResponse =
+                    HttpClient.newBuilder()
+                            .build()
+                            .send(buildBoredApiRequest, HttpResponse.BodyHandlers.ofString());
+
+            // build the type format
+            Moshi moshi2 = new Moshi.Builder().build();
+            JsonAdapter<List<List<String>>> adapter2 =
+                    moshi2.adapter(
+                            Types.newParameterizedType(
+                                    List.class, Types.newParameterizedType(List.class, String.class)));
+
+
+            BroadbandProxy proxyResponseLoS = new BroadbandProxy(adapter2.fromJson(sentBoredApiResponse.body()));
+
+
+            Assert.assertEquals(2, 2);
+
+        }
     }
 }
