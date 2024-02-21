@@ -12,8 +12,8 @@ import spark.*;
 public class LoadHandler implements Route {
 
   /**
-   * A method to handle the request made when the endpoint is hit and to return an appropriate
-   * JSON response.
+   * A method to handle the request made when the endpoint is hit and to return an appropriate JSON
+   * response.
    *
    * @return a JSON-like string
    */
@@ -23,7 +23,7 @@ public class LoadHandler implements Route {
     Map<String, Object> responseMap = new HashMap<>();
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Map<String, Object>> adapter =
-            moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
+        moshi.adapter(Types.newParameterizedType(Map.class, String.class, Object.class));
 
     String filepathParam = request.queryParams("filepath");
     if (filepathParam == null || filepathParam.isEmpty()) {
