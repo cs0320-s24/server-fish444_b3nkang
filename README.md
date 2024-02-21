@@ -19,9 +19,7 @@ This project utilizes four handlers to cover four endpoints for our server, resp
 * `viewcsv`, which displays the csv data in its response,
 * `searchcsv`, which takes in a search term and optional specificity arguments to find which rows a given term may be in,
 * and `broadband`, which takes in a state and county parameter and returns the %age of inhabitants with broadband access.
-
-[TO ADD MORE ON DATASOURCE AND PROXIES FOR FISH]
-
+* and BroadbandProxy, which is a proxy class that implements List of List of Strings. Also proxies the ACS responses.
 
 # Errors/Bugs
 
@@ -42,7 +40,7 @@ handler for this, but the issue itself still persists.
 
 # Tests
 
-[TO COMPLETE FOR FISH]
+Testing due to time conflits is not fully implemented.
 
 # How to
 
@@ -74,7 +72,8 @@ Various defensive programming measures are taken in this implementation, includi
 However, as this is a continued implementation of CSV, the issues which previously plagued CSV still exist on this current implementation. This primarily means that for CSVs with malformed data, if a row has null or unset values at the start or end of a row that are not 'wrapped' with non-null/unset values, when the readReader() method in Parser attempts to split and process the CSV data, it will often eliminate the null altogether, which results in a returned grid of a dimension where some rows are not of the full grid length. There is an error handler for this, but the issue itself still persists.
 
 Tests
-[TO COMPLETE FOR FISH]
+
+Due to time conflicts, testing was not fully implemented
 
 How to
 You must load a CSV first with http://localhost:3232/loadcsv?filepath=data/prod/YourFileNameHere.csv.
